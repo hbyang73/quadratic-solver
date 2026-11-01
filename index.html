@@ -35,6 +35,70 @@
   .formula { font-size:1.15rem; text-align:center; padding:12px; background:var(--accent2); border-radius:10px; overflow-wrap:anywhere; }
   footer { color:var(--muted); text-align:center; font-size:.9rem; padding:10px 0 24px; }
   @media (max-width:560px) { body { padding:14px; } .card { padding:17px; } .inputs { gap:9px; } input { padding:10px 7px; } }
+/* Mobile-friendly improvements */
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .card {
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: 12px;
+    }
+
+    /* Stack coefficient inputs vertically */
+    .inputs {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Prevent automatic zoom when selecting inputs on iPhones */
+    input {
+        font-size: 16px;
+        padding: 14px;
+        width: 100%;
+    }
+
+    /* Make buttons easier to tap */
+    .buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        min-height: 48px;
+    }
+
+    /* Keep equations readable */
+    .equation {
+        font-size: 1.3rem;
+        overflow-wrap: anywhere;
+    }
+
+    .formula {
+        font-size: 1rem;
+        overflow-wrap: anywhere;
+    }
+
+    /* Make solution steps easier to read */
+    .step {
+        padding: 12px;
+        font-size: 1rem;
+        overflow-wrap: anywhere;
+    }
+
+    .roots {
+        font-size: 1.15rem;
+        overflow-wrap: anywhere;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+}
 </style>
 </head>
 <body>
