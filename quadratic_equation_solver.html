@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadratic Equation Solver</title>
+<style>
+  :root { color-scheme: light; --ink:#172033; --muted:#5d687a; --line:#d7deea; --panel:#f5f8fc; --accent:#2459a9; --accent2:#eaf1ff; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink); background:#eef2f8; line-height:1.5; }
+  main { max-width:850px; margin:0 auto; }
+  header { margin-bottom:20px; }
+  h1 { margin:0 0 6px; font-size:clamp(1.8rem,4vw,2.5rem); }
+  h2 { margin-top:0; font-size:1.25rem; }
+  .subtitle { color:var(--muted); margin:0; }
+  .card { background:white; border:1px solid var(--line); border-radius:16px; padding:22px; margin:16px 0; box-shadow:0 4px 16px #1720330b; }
+  .equation { text-align:center; font-size:clamp(1.5rem,4vw,2rem); font-weight:650; padding:10px 0 18px; }
+  .inputs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+  label { display:block; font-weight:650; margin-bottom:6px; }
+  input { width:100%; padding:12px; border:1px solid #aeb9cb; border-radius:9px; font:inherit; font-size:1.1rem; }
+  input:focus { outline:3px solid #b8d0ff; border-color:var(--accent); }
+  .help { color:var(--muted); font-size:.9rem; margin:10px 0 0; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  button { border:0; border-radius:9px; padding:11px 17px; font:inherit; font-weight:700; cursor:pointer; }
+  .primary { background:var(--accent); color:white; }
+  .secondary { background:var(--accent2); color:#173d7a; }
+  button:hover { filter:brightness(.96); }
+  .result-box { background:var(--panel); border-radius:12px; padding:16px; margin-top:12px; }
+  .result-title { color:var(--muted); font-size:.9rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  .roots { font-size:1.3rem; font-weight:700; margin-top:5px; overflow-wrap:anywhere; }
+  .step { border-left:4px solid #b8ccef; padding:10px 14px; margin:12px 0; background:#fbfcff; border-radius:0 8px 8px 0; overflow-wrap:anywhere; }
+  .step strong { display:block; margin-bottom:3px; }
+  .error { background:#fff2f0; border:1px solid #e7b8b2; color:#8a241a; border-radius:10px; padding:12px 14px; margin-top:14px; }
+  .hidden { display:none; }
+  .formula { font-size:1.15rem; text-align:center; padding:12px; background:var(--accent2); border-radius:10px; overflow-wrap:anywhere; }
+  footer { color:var(--muted); text-align:center; font-size:.9rem; padding:10px 0 24px; }
+  @media (max-width:560px) { body { padding:14px; } .card { padding:17px; } .inputs { gap:9px; } input { padding:10px 7px; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Quadratic Equation Solver</h1>
+    <p class="subtitle">Enter the coefficients, then explore the discriminant and each step of the quadratic formula.</p>
+  </header>
+
+  <section class="card" aria-labelledby="input-heading">
+    <h2 id="input-heading">1. Enter the coefficients</h2>
+    <div class="equation" aria-label="a x squared plus b x plus c equals zero"><span id="eqA">1</span>x² + (<span id="eqB">−5</span>)x + (<span id="eqC">6</span>) = 0</div>
+    <div class="inputs">
+      <div><label for="a">Coefficient a</label><input id="a" type="number" step="any" value="1"></div>
+      <div><label for="b">Coefficient b</label><input id="b" type="number" step="any" value="-5"></div>
+      <div><label for="c">Coefficient c</label><input id="c" type="number" step="any" value="6"></div>
+    </div>
+    <p class="help">Use any real numbers. The coefficient a must not be zero.</p>
+    <div class="buttons">
+      <button class="primary" id="solve">Solve equation</button>
+      <button class="secondary" id="example">Try another example</button>
+      <button class="secondary" id="reset">Reset</button>
+    </div>
+    <div id="error" class="error hidden" role="alert"></div>
+  </section>
+
+  <section class="card" aria-labelledby="answer-heading" aria-live="polite">
+    <h2 id="answer-heading">2. Roots</h2>
+    <div class="result-box">
+      <div class="result-title">Solution</div>
+      <div class="roots" id="roots">x₁ = 2, x₂ = 3</div>
+      <div id="rootNote" class="help">The equation has two distinct real roots.</div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="steps-heading">
+    <h2 id="steps-heading">3. Step-by-step solution</h2>
+    <div class="formula">x = (−b ± √(b² − 4ac)) / 2a</div>
+    <div class="step"><strong>Step 1: Identify a, b, and c</strong><div id="step1">a = 1, b = −5, c = 6</div></div>
+    <div class="step"><strong>Step 2: Calculate the discriminant</strong><div id="step2">D = b² − 4ac = (−5)² − 4(1)(6) = 1</div></div>
+    <div class="step"><strong>Step 3: Substitute into the quadratic formula</strong><div id="step3">x = (5 ± √1) / 2</div></div>
+    <div class="step"><strong>Step 4: Simplify and find the roots</strong><div id="step4">x₁ = 3, x₂ = 2</div></div>
+    <p class="help">Tip: The discriminant tells you what kind of roots to expect: D &gt; 0 means two distinct real roots; D = 0 means one repeated real root; D &lt; 0 means two complex roots.</p>
+  </section>
+  <footer>Math learning tool · Answers are calculated in your browser.</footer>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = n => {
+    if (Object.is(n, -0) || Math.abs(n) < 1e-12) n = 0;
+    if (Number.isInteger(n)) return String(n);
+    return Number(n.toPrecision(10)).toString();
+  };
+  const signed = n => n < 0 ? '−' + fmt(Math.abs(n)) : fmt(n);
+  const paren = n => '(' + signed(n) + ')';
+  const showError = message => {
+    $('error').textContent = message;
+    $('error').classList.remove('hidden');
+  };
+  const clearError = () => $('error').classList.add('hidden');
+
+  function solve() {
+    clearError();
+    const a = Number($('a').value), b = Number($('b').value), c = Number($('c').value);
+    if ($('a').value.trim() === '' || $('b').value.trim() === '' || $('c').value.trim() === '') {
+      showError('Please enter a value for all three coefficients.');
+      return;
+    }
+    if (![a,b,c].every(Number.isFinite)) {
+      showError('Please enter valid finite numbers for a, b, and c.');
+      return;
+    }
+    if (a === 0) {
+      showError('a = 0, so this is not a quadratic equation. The quadratic formula cannot be used.');
+      $('roots').textContent = 'No quadratic roots calculated';
+      $('rootNote').textContent = 'For a = 0, solve the resulting linear equation bx + c = 0 instead.';
+      return;
+    }
+
+    $('eqA').textContent = signed(a);
+    $('eqB').textContent = signed(b);
+    $('eqC').textContent = signed(c);
+    const D = b*b - 4*a*c;
+    if (!Number.isFinite(D)) {
+      showError('These values are too large for this calculator to handle reliably.');
+      return;
+    }
+    $('step1').textContent = `a = ${fmt(a)}, b = ${signed(b)}, c = ${signed(c)}`;
+    $('step2').textContent = `D = b² − 4ac = ${paren(b)}² − 4(${fmt(a)})(${signed(c)}) = ${fmt(D)}`;
+
+    if (D > 0) {
+      const sqrtD = Math.sqrt(D);
+      const x1 = (-b + sqrtD)/(2*a);
+      const x2 = (-b - sqrtD)/(2*a);
+      $('roots').textContent = `x₁ = ${fmt(x1)},  x₂ = ${fmt(x2)}`;
+      $('rootNote').textContent = 'Two distinct real roots.';
+      $('step3').textContent = `x = (−(${signed(b)}) ± √${fmt(D)}) / (2 × ${fmt(a)}) = (${signed(-b)} ± √${fmt(D)}) / ${fmt(2*a)}`;
+      $('step4').textContent = `x₁ = ${fmt(x1)} and x₂ = ${fmt(x2)}. Substitute each value into the original equation to check.`;
+    } else if (D === 0) {
+      const x = -b/(2*a);
+      $('roots').textContent = `x = ${fmt(x)} (a repeated root)`;
+      $('rootNote').textContent = 'One real root with multiplicity 2.';
+      $('step3').textContent = `x = (−(${signed(b)}) ± √0) / (2 × ${fmt(a)}) = ${signed(-b)} / ${fmt(2*a)}`;
+      $('step4').textContent = `x = ${fmt(x)}. Both solutions are equal.`;
+    } else {
+      const real = -b/(2*a);
+      const imaginary = Math.sqrt(-D)/Math.abs(2*a);
+      const imagPart = fmt(imaginary);
+      $('roots').textContent = `x₁ = ${fmt(real)} + ${imagPart}i,  x₂ = ${fmt(real)} − ${imagPart}i`;
+      $('rootNote').textContent = 'No real roots; there are two complex-conjugate roots.';
+      $('step3').textContent = `x = (${signed(-b)} ± √(${fmt(D)})) / ${fmt(2*a)} = (${signed(-b)} ± i√${fmt(-D)}) / ${fmt(2*a)}`;
+      const realPart = real === 0 ? '0' : fmt(real);
+      $('step4').textContent = `x₁ = ${realPart} + ${imagPart}i and x₂ = ${realPart} − ${imagPart}i.`;
+    }
+  }
+
+  $('solve').addEventListener('click', solve);
+  ['a','b','c'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') solve(); }));
+  $('example').addEventListener('click', () => {
+    const examples = [[1,2,1],[1,0,-9],[2,3,5],[1,-5,6],[-2,4,6]];
+    const current = [$('a').value,$('b').value,$('c').value].join(',');
+    let candidates = examples.filter(v => v.join(',') !== current);
+    const v = candidates[Math.floor(Math.random()*candidates.length)];
+    ['a','b','c'].forEach((id,i) => $(id).value = v[i]);
+    solve();
+  });
+  $('reset').addEventListener('click', () => {
+    $('a').value = 1; $('b').value = -5; $('c').value = 6;
+    solve();
+  });
+  solve();
+})();
+</script>
+</body>
+</html>
